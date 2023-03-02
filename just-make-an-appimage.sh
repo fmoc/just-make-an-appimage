@@ -1,10 +1,7 @@
 #! /bin/bash
 
-set -e
-set -x
+set -euxo pipefail
 
-image_name="just-make-an-appimage"
-
-docker build -t "$image_name" .
-
-docker run -e CHOWN_UID="$(id -u)" --rm -v "$(readlink -f .)":/ws -v -it "$image_name"
+image="owncloudci/appimage-build:centos7-amd64"
+docker pull "$image"
+docker run -e CHOWN_UID="$(id -u)" --rm -v "$(readlink -f .)":/ws -v -it "$image" /ws/scripts/craft-appimage.sh

@@ -3,11 +3,23 @@
 set -e
 set -x
 
+yes 0 | python3 -c "$(curl -q https://raw.githubusercontent.com/KDE/craft/master/setup/CraftBootstrap.py)" --prefix ~/CraftRoot
+
 # enable craft environment
 source ~/CraftRoot/craft/craftenv.sh
 
-# set up and build ownCloud client
+# prepare craft environment
 craft --add-blueprint-repository https://github.com/owncloud/craft-blueprints-owncloud.git
+
+# in case a specific branch was requested, we want to build that branch
+if [[ "$OC_BRANCH" != "" ]]; then
+    craft --set branch="$OC_BRANCH" owncloud-client
+fi
+
+# install dependencies
+craft linuxdeploy
+
+# set up and build ownCloud client
 craft owncloud-client
 craft --package owncloud-client
 

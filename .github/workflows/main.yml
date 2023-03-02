@@ -1,0 +1,46 @@
+name: Build AppImage
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'ownCloud client branch'
+        required: false
+        default: ''
+
+jobs:
+  build-appimage:
+    name: Build AppImage
+    runs-on: ubuntu-20.04
+    env:
+      BRANCH: "${{ inputs.branch }}"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build AppImage
+        run: bash just-make-an-appimage.sh
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: AppImage
+          path: own*.AppImage*
+
+  upload:
+    name: Create release and upload artifacts
+    needs:
+      - build-appimage
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+      - name: Inspect directory after downloading artifacts
+        run: ls -alFR
+      - name: Create release and upload artifacts
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+            cd AppImage
+            wget -q https://github.com/TheAssassin/pyuploadtool/releases/download/continuous/pyuploadtool-x86_64.AppImage
+            chmod +x pyuploadtool-x86_64.AppImage
+            ./pyuploadtool-x86_64.AppImage own*.AppImage*
