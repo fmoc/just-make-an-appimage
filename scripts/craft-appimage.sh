@@ -12,8 +12,8 @@ source ~/CraftRoot/craft/craftenv.sh
 craft --add-blueprint-repository https://github.com/owncloud/craft-blueprints-owncloud.git
 
 # in case a specific branch was requested, we want to build that branch
-if [[ "$OC_BRANCH" != "" ]]; then
-    craft --set branch="$OC_BRANCH" owncloud-client
+if [[ "$BRANCH" != "" ]]; then
+    craft --set branch="$BRANCH" owncloud-client
 fi
 
 # install dependencies
