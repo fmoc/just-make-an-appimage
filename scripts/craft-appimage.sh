@@ -20,6 +20,8 @@ fi
 craft linuxdeploy
 
 # set up and build ownCloud client
+craft --set enableAppImageUpdater=true owncloud-client
+craft --set enableAutoUpdater=true owncloud-client
 craft owncloud-client
 craft --package owncloud-client
 
